@@ -1,0 +1,15 @@
+--- Create venv---
+
+ py/python -m venv venv
+
+ --- activating the venv ---
+ venv\Script\activate
+
+
+
+
+ ---- installing flask ---
+ pip install flask
+
+ -- running app --
+ py/python filename.py
