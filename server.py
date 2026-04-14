@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask, jsonify, request
 
 app = Flask (__name__) #instance of Flask
 
@@ -12,6 +12,7 @@ def home():
 def get_students_65():
     students_list = ["Parrilla", "Trishon", "Antonio"]
     return students_list
+
 
 
 
@@ -45,7 +46,43 @@ products = [
 def get_products():
     return {"data": products}
 
+@app.route("/api/products/<int:product_id>", methods=["GET"])
+def get_product_by_id(product_id):
+    for product in products:
+        if product["_id"] == product_id:
+            return jsonify({
+                "success": True,
+                "message": "product retrieved sucessfully",
+                "data": product
+            }), 200
+    return jsonify({
+        "success": False,
+        "message":"Product not found"
+        }), 404 #not found
 
+
+#create products endpoint
+@app.route("/api/products", methods=["POST"])
+def create_products():
+    print(f"new product: {request.get_json()}")
+    new_product = request.get_json()
+    products.append(new_product)
+    return jsonify({
+        "success": True,
+        "message": "Product added successfully",
+        "data": new_product
+    }), 201 #created
+    
+
+
+#other
+@app.route("/greet/<string:name>", methods=["GET"])
+def say_hi(name):
+    return jsonify({"message":f"hello {name}"}) #status code- OK
+
+@app.route("/api/users/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    return jsonify({"id of user":user_id})
 # --------- Coupons -------------
 coupons = [
         {
@@ -76,7 +113,12 @@ def get_coupons_count():
     #return str(counter)
 
 
+#post api coupons
+
+#get api with path parameters by id (give a 404 if not found and a 200 if found)
+
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
 #when this file is run directly: __name__ == "__main__"
 #when this file is imported as module: __name__ == "server.py"
