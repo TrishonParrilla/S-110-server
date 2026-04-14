@@ -47,9 +47,7 @@ def get_products():
 
 
 # --------- Coupons -------------
-@app.route("/api/coupons", methods=["GET"])
-def get_coupons():
-    coupons = [
+coupons = [
         {
             "_id":1,"code":"WELCOME10","discount":10
         },
@@ -60,15 +58,23 @@ def get_coupons():
             "_id":3,"code":"VIP50","discount": 50
         }
     ]
-    return(coupons)
+
+
+@app.route("/api/coupons", methods=["GET"])
+def get_coupons():
+    return({"data": coupons})
 
 #taking the value of coupons list by using the get_coupons function as a value for the coupon_data variable 
 #converted it into a string because using len() by itself was returning information that gave an error
 @app.route("/api/coupons/count", methods=["GET"])
 def get_coupons_count():
-    coupon_data = get_coupons()
-    for coupon in coupon_data:
-        return str(len(coupon))
+    return ({"coupons_counter": len(coupons)})
+    #counter = 0
+    #for coupon in coupons:
+    #    counter += 1
+
+    #return str(counter)
+
 
 if __name__ == "__main__":
     app.run()
