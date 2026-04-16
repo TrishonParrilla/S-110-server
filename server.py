@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 import uuid
 
 app = Flask (__name__) #instance of Flask
-
+CORS(app)
+CORS(app, origins=["https://localhost:5173", "https://myapp.com"])
 # GET http://127.0.0.1:5000/home
 @app.route("/", methods=["GET"])
 def home():
@@ -176,8 +178,51 @@ def get_coupon_by_id(coupon_id):
         "message":"Coupon not found"
         }), 404 #not found
 
+#this keeps track of the coupons that gets removed
+coupon_id_counter = 3
+if len(coupons) > 3:
+        coupon_id_counter+= 1
+elif len(coupons) < 3:
+        coupon_id_counter-= 1
+
+#delete coupon by id
+@app.route("/api/coupons/<int:coupon_id>", methods=["DELETE"])
+def delete_coupon_by_id(coupon_id): 
+
+    for coupon in coupons:
+        if coupon["_id"] == coupon_id:
+            coupons.remove(coupon)
+            return({
+                "success":True,
+                "message": "Coupon Deleted"
+            }), 204#No content
+    return({
+        "success":False,
+        "message":":Product not found"
+    }),404 #not found
+
+
 #delete coupon by id
 #put coupon by id to edit existing coupon
+
+@app.route("/api/coupons/<int:coupon_id>", methods=["PUT"])
+def replace_coupon_by_id(coupon_id):
+    updated_coupon = request.json
+    for coupon in coupons:
+        if coupon["_id"] == coupon_id:
+            coupon["code"] = updated_coupon["code"]
+            coupon["discount"] = updated_coupon["discount"]
+            return({
+                "success": True,
+                "message":"Coupon successfully replaced"
+            }), 200
+    return({
+        "success": False,
+        "message": "Coupon not found"
+    })
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 #when this file is run directly: __name__ == "__main__"
