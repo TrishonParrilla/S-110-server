@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import uuid
 
 app = Flask (__name__) #instance of Flask
 
@@ -66,7 +67,8 @@ def get_product_by_id(product_id):
 def create_products():
     print(f"new product: {request.get_json()}")
     new_product = request.get_json()
-    new_product["_id"] = len(products) + 1
+    #new_product["_id"] = len(products) + 1
+    new_product["_id"] = uuid.uuid4() #generates a random string for product ID
     products.append(new_product)
     return jsonify({
         "success": True,
