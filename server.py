@@ -114,8 +114,30 @@ def get_coupons_count():
 
 
 #post api coupons
+@app.route("/api/coupons", methods=["POST"])
+def add_coupon():
+    coupons.append(request.get_json())
+    return jsonify({
+        "success": True,
+        "message": "Coupon added successfully",
+        "data": request.get_json()
+    }), 201
+
 
 #get api with path parameters by id (give a 404 if not found and a 200 if found)
+@app.route("/api/coupons/<int:coupon_id>", methods=["GET"])
+def get_coupon_by_id(coupon_id):
+    for coupon in coupons:
+        if coupon["_id"] == coupon_id:
+            return jsonify({
+                "success": True,
+                "message": "coupon retrieved sucessfully",
+                "data": coupon
+            }), 200
+    return jsonify({
+        "success": False,
+        "message":"Coupon not found"
+        }), 404 #not found
 
 
 if __name__ == "__main__":
