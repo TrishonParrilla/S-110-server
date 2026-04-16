@@ -66,6 +66,7 @@ def get_product_by_id(product_id):
 def create_products():
     print(f"new product: {request.get_json()}")
     new_product = request.get_json()
+    new_product["_id"] = len(products) + 1
     products.append(new_product)
     return jsonify({
         "success": True,
@@ -73,6 +74,45 @@ def create_products():
         "data": new_product
     }), 201 #created
     
+
+
+#delete_product_by_id
+@app.route("/api/products/<int:product_id>", methods=["DELETE"])
+def delete_product_by_id(product_id):
+    for product in products:
+        if product_id["_id"] == product_id:
+            products.remove(product)
+            
+            return jsonify({"Success": True,
+                            "message": "Product deleted successfully"
+                            }), 200 #OK
+    return jsonify ({
+        "Success": False,
+        "Message": "Product not found"
+    }), 404 #not found
+
+
+#update product by id
+@app.route("/api/products/<int:product_id>", methods=["PUT"])
+def update_product_by_id(product_id):
+    updated_product = request.get_json()
+    for product in products:
+        if product["_id"] == product_id:
+            product["category"] = updated_product["category"]
+            product["image"] = updated_product["image"]
+            product["price"] = updated_product["price"]
+            product["title"] = updated_product["title"]
+
+        
+            return jsonify({
+                "success":True,
+                "message":"Product updated succesfully",
+                "data": product
+            }), 200
+    return jsonify ({
+        "success":False,
+        "message": "Product not found"
+    }) , 404 #not found
 
 
 #other
@@ -85,16 +125,11 @@ def get_user_by_id(user_id):
     return jsonify({"id of user":user_id})
 # --------- Coupons -------------
 coupons = [
-        {
-            "_id":1,"code":"WELCOME10","discount":10
-        },
-        {
-            "_id":2,"code":"SPOOKY25","discount":25
-        },
-        {
-            "_id":3,"code":"VIP50","discount": 50
-        }
-    ]
+  {"_id":1,"code":"WELCOME10","discount":10},
+  {"_id":2,"code":"SPOOKY25","discount":25},
+  {"_id":3,"code":"VIP50","discount":50}
+]
+
 
 
 @app.route("/api/coupons", methods=["GET"])
@@ -121,7 +156,7 @@ def add_coupon():
         "success": True,
         "message": "Coupon added successfully",
         "data": request.get_json()
-    }), 201
+    }), 201 #created
 
 
 #get api with path parameters by id (give a 404 if not found and a 200 if found)
@@ -139,7 +174,8 @@ def get_coupon_by_id(coupon_id):
         "message":"Coupon not found"
         }), 404 #not found
 
-
+#delete coupon by id
+#put coupon by id to edit existing coupon
 if __name__ == "__main__":
     app.run(debug=True)
 #when this file is run directly: __name__ == "__main__"
